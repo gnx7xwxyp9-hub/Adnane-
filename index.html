@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Résultats MOD-01 — CRMEF Souss-Massa</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=Syne:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --blue:#0C447C;--blue2:#1A5FA8;--blue3:#378ADD;
+  --blue-pale:#EBF4FF;--blue-border:#BFDBFE;
+  --ink:#0F1C2E;--ink2:#374151;--ink3:#6B7280;--ink4:#9CA3AF;
+  --bg:#EEF4FB;--surface:#fff;--surface2:#F8FAFC;--border:#E2E8F0;
+  --red:#DC2626;--red-bg:#FEF2F2;--red-bd:#FECACA;
+  --green:#166534;--green-bg:#F0FDF4;--green-bd:#BBF7D0;
+  --amber:#92400E;--amber-bg:#FFFBEB;--amber-bd:#FCD34D;
+  --r:14px;--r-sm:9px;--r-lg:22px;
+  --shadow:0 6px 28px rgba(12,68,124,.12);
+}
+html,body{min-height:100vh;background:var(--bg);font-family:'IBM Plex Sans Arabic','Segoe UI',sans-serif;color:var(--ink)}
+body{display:flex;flex-direction:column;align-items:center;padding:2rem 1rem 3rem}
+
+/* ── HEADER ── */
+.header{text-align:center;margin-bottom:1.75rem;animation:fadeUp .55s ease both}
+.logo{width:66px;height:66px;border-radius:18px;background:var(--blue);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-size:30px;box-shadow:0 8px 24px rgba(12,68,124,.28)}
+.h-title{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--blue);letter-spacing:-.3px}
+.h-sub{font-size:12.5px;color:var(--ink3);margin-top:5px;line-height:1.65}
+.h-badge{display:inline-flex;align-items:center;gap:6px;margin-top:10px;background:var(--blue);color:#fff;font-size:11.5px;font-weight:600;padding:4px 14px;border-radius:99px}
+
+/* ── CARD ── */
+.card{width:100%;max-width:470px;background:var(--surface);border-radius:var(--r-lg);box-shadow:var(--shadow);overflow:hidden;animation:fadeUp .55s .08s ease both}
+
+/* ── PROGRESS ── */
+.prog{display:flex;align-items:center;padding:1.5rem 1.75rem 1rem}
+.p-step{display:flex;flex-direction:column;align-items:center;flex:1}
+.p-dot{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;border:2.5px solid var(--border);color:var(--ink4);background:var(--surface);transition:all .3s;z-index:1}
+.p-dot.done{background:var(--blue);border-color:var(--blue);color:#fff}
+.p-dot.active{border-color:var(--blue);color:var(--blue);background:var(--blue-pale);box-shadow:0 0 0 4px rgba(12,68,124,.1)}
+.p-lbl{font-size:10.5px;color:var(--ink4);margin-top:5px;text-align:center;font-weight:500;transition:color .3s}
+.p-lbl.done,.p-lbl.active{color:var(--blue);font-weight:600}
+.p-line{flex:1;height:2.5px;background:var(--border);margin-top:-18px;transition:background .3s;border-radius:2px}
+.p-line.done{background:var(--blue)}
+
+/* ── BODY ── */
+.body{padding:0 1.75rem 1.75rem}
+.sc{display:none}.sc.on{display:block;animation:fadeUp .3s ease both}
+
+/* ── MESSAGES ── */
+.msg{display:none;align-items:flex-start;gap:9px;border-radius:var(--r-sm);padding:11px 14px;margin-bottom:1.1rem;font-size:12.5px;line-height:1.55;border:1px solid transparent}
+.msg.on{display:flex}
+.msg.err{background:var(--red-bg);border-color:var(--red-bd);color:#991B1B}
+.msg.warn{background:var(--amber-bg);border-color:var(--amber-bd);color:var(--amber)}
+.msg.info{background:var(--blue-pale);border-color:var(--blue-border);color:#1D4ED8}
+.msg.ok{background:var(--green-bg);border-color:var(--green-bd);color:var(--green)}
+.mi{font-size:14px;margin-top:1px;flex-shrink:0}
+
+/* ── FIELDS ── */
+.field{margin-bottom:1.1rem}
+.flabel{font-size:11px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.07em;display:block;margin-bottom:7px}
+input[type=email],select{width:100%;padding:11px 14px;font-size:14px;border:1.5px solid var(--border);border-radius:var(--r-sm);background:var(--surface2);color:var(--ink);outline:none;font-family:inherit;transition:all .2s;appearance:none}
+input[type=email]:focus,select:focus{border-color:var(--blue3);background:#fff;box-shadow:0 0 0 3.5px rgba(55,138,221,.13)}
+.sel-wrap{position:relative}
+.sel-wrap::after{content:'▾';position:absolute;right:13px;top:50%;transform:translateY(-50%);color:var(--ink4);pointer-events:none;font-size:14px}
+.sel-wrap select{padding-right:36px;cursor:pointer}
+.sel-wrap select:disabled{opacity:.45;cursor:not-allowed}
+
+/* ── BOUTONS ── */
+.btn{width:100%;padding:12px 16px;font-size:14px;font-weight:700;border:none;border-radius:var(--r-sm);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .2s;font-family:inherit}
+.btn:active{transform:scale(.98)}
+.btn:disabled{opacity:.38;cursor:not-allowed;pointer-events:none}
+.btn-p{background:var(--blue);color:#fff;box-shadow:0 4px 14px rgba(12,68,124,.22);margin-top:4px}
+.btn-p:hover:not(:disabled){opacity:.91;box-shadow:0 6px 18px rgba(12,68,124,.3)}
+.btn-g{background:none;border:1.5px solid var(--border);color:var(--ink3);margin-top:10px}
+.btn-g:hover:not(:disabled){background:var(--surface2)}
+
+/* ── ID CARD ── */
+.id-card{background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--r-sm);padding:12px 15px;margin-bottom:1.1rem;display:flex;align-items:center;gap:12px}
+.id-avatar{width:42px;height:42px;border-radius:50%;background:var(--blue-pale);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:20px}
+.id-name{font-size:14.5px;font-weight:700;color:var(--ink)}
+.id-meta{font-size:12px;color:var(--ink3);margin-top:2px}
+
+/* ── CODE OTP ── */
+.code-label{font-size:13px;font-weight:600;color:var(--ink2);margin-bottom:8px}
+.code-hint{font-size:12px;color:var(--ink3);margin-bottom:14px;line-height:1.5}
+.code-grid{display:flex;gap:8px;justify-content:center;margin:1rem 0}
+.code-grid input{width:48px;height:56px;text-align:center;font-size:23px;font-weight:700;border:2px solid var(--border);border-radius:var(--r-sm);background:var(--surface2);color:var(--ink);padding:0;outline:none;font-family:'Syne',monospace;transition:all .2s}
+.code-grid input:focus{border-color:var(--blue3);background:#fff;box-shadow:0 0 0 3px rgba(55,138,221,.13)}
+.code-grid input.filled{border-color:var(--blue);background:var(--blue-pale);color:var(--blue)}
+.code-grid input.wrong{border-color:var(--red);background:var(--red-bg);color:var(--red);animation:shake .3s}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+
+.attempts-bar{display:flex;gap:6px;margin-bottom:1.1rem}
+.at-dot{flex:1;height:4px;border-radius:3px;background:var(--border);transition:background .3s}
+.at-dot.used{background:var(--red)}
+
+.timer-row{display:flex;align-items:center;justify-content:space-between;margin:.8rem 0 1.1rem}
+.timer{font-size:12px;color:var(--ink3);display:flex;align-items:center;gap:5px}
+.timer.urgent{color:var(--red);font-weight:600}
+.resend-btn{font-size:12.5px;color:var(--blue3);cursor:pointer;background:none;border:none;font-weight:600;font-family:inherit}
+.resend-btn:disabled{color:var(--ink4);cursor:not-allowed}
+
+/* ── LOCKED ── */
+.locked-wrap{text-align:center;padding:1.5rem 0 .5rem}
+.locked-icon{width:66px;height:66px;border-radius:50%;background:var(--red-bg);display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;font-size:30px}
+.locked-title{font-size:17px;font-weight:700;color:var(--ink);margin-bottom:6px}
+.locked-sub{font-size:13px;color:var(--ink3);line-height:1.6}
+.locked-cd{font-size:40px;font-weight:800;color:var(--red);margin:1rem 0;font-family:'Syne',monospace;letter-spacing:.04em}
+
+/* ── RESULT ── */
+.result-hero{background:linear-gradient(135deg,var(--blue) 0%,var(--blue2) 100%);border-radius:var(--r);padding:1.75rem;text-align:center;margin-bottom:1.2rem;box-shadow:0 8px 24px rgba(12,68,124,.22)}
+.res-who{font-size:13px;color:rgba(255,255,255,.75);font-weight:500;margin-bottom:10px}
+.res-note{font-size:64px;font-weight:800;color:#fff;line-height:1;font-family:'Syne',monospace}
+.res-denom{font-size:14px;color:rgba(255,255,255,.6);margin-top:6px}
+.mention-pill{display:inline-flex;align-items:center;gap:5px;padding:5px 20px;border-radius:99px;font-size:13px;font-weight:700;margin-top:14px;background:rgba(255,255,255,.18);color:#fff;border:1.5px solid rgba(255,255,255,.3)}
+.detail-grid{border:1.5px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:1.2rem}
+.d-row{display:flex;justify-content:space-between;align-items:center;padding:11px 16px;font-size:13px;border-bottom:1px solid #F1F5F9}
+.d-row:last-child{border:none}
+.d-row:nth-child(even){background:var(--surface2)}
+.dl{color:var(--ink3);font-weight:500}.dv{font-weight:700;color:var(--ink)}
+.email-sent{display:flex;align-items:flex-start;gap:10px;background:var(--green-bg);border:1.5px solid var(--green-bd);border-radius:var(--r-sm);padding:12px 15px;margin-bottom:1.2rem;font-size:12.5px;color:var(--green)}
+
+/* ── FOOTER ── */
+.footer{text-align:center;font-size:11.5px;color:var(--ink4);margin-top:1.5rem;line-height:1.7;animation:fadeUp .55s .15s ease both}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:480px){
+  body{padding:1.2rem .75rem 2.5rem}
+  .body{padding:0 1.2rem 1.5rem}
+  .prog{padding:1.2rem 1.2rem .75rem}
+  .code-grid input{width:42px;height:50px;font-size:20px}
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">🎓</div>
+  <div class="h-title">Résultats — MOD-01</div>
+  <div class="h-sub">
+    Renforcement de Base 1 &middot; Athlétisme &middot; 2026<br>
+    <strong style="color:var(--blue)">ABDERRAHIM BOUARGANE</strong> — Formateur
+  </div>
+  <div class="h-badge">🏛️ CRMEF Souss-Massa</div>
+</div>
+
+<div class="card">
+
+  <!-- PROGRESS -->
+  <div class="prog">
+    <div class="p-step">
+      <div class="p-dot active" id="pd1">1</div>
+      <div class="p-lbl active" id="pl1">Identité</div>
+    </div>
+    <div class="p-line" id="pline1"></div>
+    <div class="p-step">
+      <div class="p-dot" id="pd2">2</div>
+      <div class="p-lbl" id="pl2">Code</div>
+    </div>
+    <div class="p-line" id="pline2"></div>
+    <div class="p-step">
+      <div class="p-dot" id="pd3">3</div>
+      <div class="p-lbl" id="pl3">Note</div>
+    </div>
+  </div>
+
+  <div class="body">
+
+    <!-- ══ ÉCRAN 1 — IDENTITÉ ══ -->
+    <div class="sc on" id="sc-1">
+      <div class="msg info on" style="margin-bottom:1.25rem">
+        <span class="mi">ℹ️</span>
+        <span>Sélectionnez votre classe et votre nom, puis saisissez votre adresse email. Un code de vérification vous sera envoyé.</span>
+      </div>
+
+      <div id="err1" class="msg err"><span class="mi">⚠️</span><span id="err1t"></span></div>
+
+      <div class="field">
+        <label class="flabel">Votre classe</label>
+        <div class="sel-wrap">
+          <select id="sel-classe" onchange="onClasse()">
+            <option value="">— Choisissez votre classe —</option>
+            <option value="QUAL">Filière Qualifiant (QUAL)</option>
+            <option value="COLL1">Collégial — Groupe 1 (COLL1)</option>
+            <option value="COLL2">Collégial — Groupe 2 (COLL2)</option>
+            <option value="COLL3">Collégial — Groupe 3 (COLL3)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="flabel">Votre nom</label>
+        <div class="sel-wrap">
+          <select id="sel-nom" disabled>
+            <option value="">— Choisissez d'abord votre classe —</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="flabel">Votre adresse email</label>
+        <input type="email" id="inp-email" placeholder="prenom.nom@exemple.com"
+               autocomplete="email" onkeydown="if(event.key==='Enter')doSendCode()">
+      </div>
+
+      <button class="btn btn-p" id="btn-send" onclick="doSendCode()">
+        📨&nbsp; Recevoir le code de vérification
+      </button>
+    </div>
+
+    <!-- ══ ÉCRAN 2 — CODE OTP ══ -->
+    <div class="sc" id="sc-2">
+      <!-- Récapitulatif identité -->
+      <div class="id-card">
+        <div class="id-avatar">👤</div>
+        <div>
+          <div class="id-name" id="id-nom"></div>
+          <div class="id-meta" id="id-meta"></div>
+        </div>
+      </div>
+
+      <div class="attempts-bar">
+        <div class="at-dot" id="at0"></div>
+        <div class="at-dot" id="at1"></div>
+        <div class="at-dot" id="at2"></div>
+      </div>
+
+      <div id="err2" class="msg err"><span class="mi">⚠️</span><span id="err2t"></span></div>
+      <div id="warn2" class="msg warn"><span class="mi">⚠️</span><span id="warn2t"></span></div>
+
+      <div class="code-label">Code à 6 chiffres</div>
+      <div class="code-hint" id="code-hint"></div>
+
+      <div class="code-grid">
+        <input type="tel" maxlength="1" id="c0" oninput="onCode(0)" onkeydown="onKey(0,event)">
+        <input type="tel" maxlength="1" id="c1" oninput="onCode(1)" onkeydown="onKey(1,event)">
+        <input type="tel" maxlength="1" id="c2" oninput="onCode(2)" onkeydown="onKey(2,event)">
+        <input type="tel" maxlength="1" id="c3" oninput="onCode(3)" onkeydown="onKey(3,event)">
+        <input type="tel" maxlength="1" id="c4" oninput="onCode(4)" onkeydown="onKey(4,event)">
+        <input type="tel" maxlength="1" id="c5" oninput="onCode(5)" onkeydown="onKey(5,event)">
+      </div>
+
+      <div class="timer-row">
+        <div class="timer" id="timer-box">⏱ <span id="timer-txt">05:00</span></div>
+        <button class="resend-btn" id="resend-btn" onclick="doResend()" disabled>Renvoyer le code</button>
+      </div>
+
+      <button class="btn btn-p" id="btn-verify" onclick="doVerify()">🔍&nbsp; Voir ma note</button>
+      <button class="btn btn-g" onclick="goBack()">← Modifier mes informations</button>
+    </div>
+
+    <!-- ══ ÉCRAN 3 — RÉSULTAT ══ -->
+    <div class="sc" id="sc-3">
+      <div class="result-hero">
+        <div class="res-who" id="res-who"></div>
+        <div class="res-note" id="res-note">—</div>
+        <div class="res-denom">/ 20 — Note finale du module</div>
+        <div class="mention-pill" id="res-mention"></div>
+      </div>
+
+      <div class="detail-grid" id="res-details"></div>
+
+      <div class="email-sent" id="res-email-sent" style="display:none">
+        <span style="font-size:18px">📧</span>
+        <span>Résultats complets envoyés à <strong id="res-email-addr"></strong></span>
+      </div>
+
+      <button class="btn btn-p" onclick="doRestart()">🔄&nbsp; Nouvelle consultation</button>
+    </div>
+
+    <!-- ══ ÉCRAN BLOQUÉ ══ -->
+    <div class="sc" id="sc-locked">
+      <div class="locked-wrap">
+        <div class="locked-icon">🔒</div>
+        <div class="locked-title">Accès temporairement bloqué</div>
+        <div class="locked-sub">3 codes incorrects saisis.<br>Veuillez patienter :</div>
+        <div class="locked-cd" id="locked-cd">10:00</div>
+        <div class="locked-sub" style="font-size:12px;margin-top:4px">L'accès sera rétabli automatiquement.</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="footer">
+  MOD-01 · Renforcement de Base 1 · Athlétisme · 2026<br>
+  ABDERRAHIM BOUARGANE —
+  <a href="mailto:a.bouargane@crmefsm.ac.ma" style="color:var(--blue3);text-decoration:none">a.bouargane@crmefsm.ac.ma</a>
+</div>
+
+<script>
+// ════════════════════════════════════════════════════════════
+// CONFIGURATION — Remplacez après déploiement du Apps Script
+// ════════════════════════════════════════════════════════════
+// ⚠️  Remplacez après déploiement du Apps Script v3
+const APPS_URL = 'https://script.google.com/macros/s/AKfycbwOw4R6bnyspLElk4Ix_UeiCbe-V1uP8sPlUOOn8v-7L0M0f5KHvD-B7PiruoFuPdaI/exec';
+
+// 🔑 TOKEN SECRET — doit être identique dans appsscript_v3.gs
+// ⚠️  Changez cette valeur et mettez la même dans le Apps Script
+const SECRET_TOKEN = 'MOD01-CRMEF-2026-BOUARGANE';
+
+// ════════════════════════════════════════════════════════════
+// BASE DE DONNÉES LOCALE — 150 étudiants (4 groupes)
+// ════════════════════════════════════════════════════════════
+const DB = {
+  QUAL:[
+    "اسماعيل بوعابد","نور الدين المصلوحي","ايمان بعلية","أيمن الصالحي",
+    "حمزة بوعلي","حمزة دحيوي","خليل بنيس","رضوان بوعلي","زكرياء عنان",
+    "زيد عبد الرحيم","سلوى السرتي","سمير المير","صلاح الدين امونان",
+    "عبد الحكيم ايت باحسن","عبد العالي ايت حمو","عبد الاله شكري",
+    "عبد السلام الدرزي","علي ابراهيم صبيرة","غيثة بوتجيه","فاتحة الكبوس",
+    "فاطمة الزهراء العفاوي","فاطمة الزهراء سطيح","فاطمة لكريشي",
+    "محمد السالك بريكة","مريم بيقش","مها مختاري","هاجر ازنهاور",
+    "هيبة واعزيز","يونس الجهاد","يونس بولكويز"
+  ],
+  COLL1:[
+    "اية السبيطي","ابوبكر خانعني","إحسان دخناو","احمد شباد","اسامة حدادي",
+    "اسامة خناز","المحجوب بوخريص","المهدي عاشور","اليزيد جناني","ايوب اركيبي",
+    "حبيبة والياض","حسناء ايت مبريك","حمزة بنمنصور","حمزة مسدور",
+    "رضوان الدحاني","رياض الحلا","سعيد ذاكر","سكينة انشاوي","سيف الدين معلوف",
+    "صفية امسكور","عبد الحكيم الحميد","عبد الصمد الفاضلي","عزالدين القريشي",
+    "علي بحيليس","عماد جدي","عمر اكريم","فاطمة الزهراء الحاملي","فالة مرشيد",
+    "كلثومة بوجدي","لطيفة اضبير","محمد الصادق","محمد اوبلال","محمد اوعلو",
+    "محمد ايت حمو وحماد","مروان عبدون","مريم بلعريبي","مريم سابق",
+    "وليد الكارني","يوسف الكاهية","يونس الوطيلي"
+  ],
+  COLL2:[
+    "ابراهيم المنصور","اسامة بجرجي","المهدي بوخميرة","اميمة المراكشي",
+    "ايمان الحمداني","ايوب اخياط","ايوب التكي","ايوب دودغار","البشير باحيج",
+    "بدر شرقي","جواد الناصري","حسن الغزالي","حسن برجي","حمزة انوش",
+    "زكرياء رشاد","سلمى حريمة","سميرة ازكاغ","صهيب ناجي","عبد الاله الحسيني",
+    "عبد الرزاق خولطي","علي عكاشة","فاطمة الزهراء بوتفروت","فاطمة الزهراء شكت",
+    "لحسن الصغير","مبارك خنيفير","محمد شرامهة","محمد مبسط","محمد ولمدن",
+    "محمد عماري","مراد نايت كروم","مروان البهلول","مريم اغناج","مريم بعديد",
+    "نجاة ميلال","نورة حرامش","ياسين المودن","يوسف العبيدي","يوسف زيلال",
+    "يوسف كوتي","يوسف ملول"
+  ],
+  COLL3:[
+    "ادريس لمريني","اكرام الكصاب","الحسين المخشوني","المهدي البنان",
+    "إلياس بعلاوي","إلياس حرش","امينة كدار","محمد اوبي","ايمان القاسمي",
+    "ايمن وعراب","أيوب ريشي","حمزة اكرف","خالد ابا","خديجة بنوح",
+    "زينب عزوز","سعيد الخبال","سعيد اودقي","عادل الحمودي","عبد اللطيف امعيز",
+    "عدنان اشعيبي","عيسى مرزوق","فاطمة الزهراء لغفة","فراس اوباعي",
+    "كريم اودمين","محمد كزاز","لطيفة ابوسعد","ليلى لشكر","مبارك بنبركة",
+    "محمد الغزوي","محمد بوجرى","محمد بوراحيم","محمد رضا الكفوز","محمد شهير",
+    "مريم بكار","نورالدين داود","هشام مودوباه","نعيمة هيكل","لمياء اعزي",
+    "يوسف الصادق","يونس اكزول"
+  ]
+};
+
+// ════════════════════════════════════════════════════════════
+// ÉTAT
+// ════════════════════════════════════════════════════════════
+const MAX_AT   = 3;
+const LOCK_SEC = 600;
+const EXP_SEC  = 300;
+
+let gClasse = '', gNom = '', gEmail = '';
+let gAt = 0, gExp = null;
+let timerInt = null, lockedInt = null;
+
+// 🔒 Noms déjà consultés — chargés depuis le SERVEUR (Apps Script)
+// Format : { "QUAL": ["اسماعيل بوعابد", ...], "COLL1": [...] }
+let consultes = {};  // rempli par loadConsultes() au démarrage
+
+function estConsulte(classe, nom) {
+  return (consultes[classe] || []).includes(nom);
+}
+
+// Chargement au démarrage — interroge le serveur
+async function loadConsultes() {
+  const sel = document.getElementById('sel-classe');
+  try {
+    const r = await callScript('get_consultes', {});
+    if (r.status === 'ok' && r.consultes) {
+      consultes = r.consultes;
+    }
+  } catch(e) {
+    // En cas d'erreur réseau, liste vide — pas bloquant
+    consultes = {};
+  }
+}
+
+// Appelé au chargement de la page
+loadConsultes();
+
+// ════════════════════════════════════════════════════════════
+// PROGRESS BAR
+// ════════════════════════════════════════════════════════════
+function setProg(step) {
+  [1,2,3].forEach(i => {
+    const dot = document.getElementById('pd'+i);
+    const lbl = document.getElementById('pl'+i);
+    dot.className = 'p-dot';
+    lbl.className = 'p-lbl';
+    if (i < step) { dot.classList.add('done'); dot.textContent = '✓'; lbl.classList.add('done'); }
+    else if (i === step) { dot.classList.add('active'); dot.textContent = i; lbl.classList.add('active'); }
+    else dot.textContent = i;
+    if (i < 3) document.getElementById('pline'+i).className = 'p-line'+(i<step?' done':'');
+  });
+}
+
+// ════════════════════════════════════════════════════════════
+// NAVIGATION ÉCRANS
+// ════════════════════════════════════════════════════════════
+function showScreen(id) {
+  ['sc-1','sc-2','sc-3','sc-locked'].forEach(s => document.getElementById(s).classList.remove('on'));
+  document.getElementById(id).classList.add('on');
+}
+
+// ════════════════════════════════════════════════════════════
+// MESSAGES
+// ════════════════════════════════════════════════════════════
+function showMsg(id, msg) {
+  const box = document.getElementById(id);
+  if (msg) { document.getElementById(id+'t').textContent = msg; box.classList.add('on'); }
+  else box.classList.remove('on');
+}
+
+// ════════════════════════════════════════════════════════════
+// LISTE DÉROULANTE NOMS
+// ════════════════════════════════════════════════════════════
+function onClasse() {
+  const cl  = document.getElementById('sel-classe').value;
+  const sel = document.getElementById('sel-nom');
+  sel.innerHTML = '<option value="">— Choisissez votre nom —</option>';
+  if (!cl) { sel.disabled = true; return; }
+  sel.disabled = false;
+  (DB[cl] || []).forEach((nom, i) => {
+     // 🔒 Nom déjà consulté côté serveur — retiré de la liste
+    const o = document.createElement('option');
+    o.value = i;
+    o.textContent = nom;
+    sel.appendChild(o);
+  });
+}
+
+// ════════════════════════════════════════════════════════════
+// ÉTAPE 1 — ENVOI DU CODE
+// ════════════════════════════════════════════════════════════
+async function doSendCode() {
+  const btn    = document.getElementById('btn-send');
+  const cl     = document.getElementById('sel-classe').value;
+  const nomIdx = document.getElementById('sel-nom').value;
+  const email  = document.getElementById('inp-email').value.trim().toLowerCase();
+
+  // Validations
+  if (!cl) { showMsg('err1', 'Veuillez sélectionner votre classe.'); return; }
+  if (nomIdx === '') { showMsg('err1', 'Veuillez sélectionner votre nom.'); return; }
+  if (!email || !email.includes('@') || !email.includes('.')) {
+    showMsg('err1', 'Adresse email invalide. Vérifiez le format (ex: prenom@gmail.com).'); return;
+  }
+  showMsg('err1', null);
+
+  gClasse = cl;
+  gNom    = DB[cl][parseInt(nomIdx)];
+  gEmail  = email;
+  gAt     = 0;
+
+  // Anti-double-clic
+  btn.disabled = true;
+  btn.innerHTML = '⏳&nbsp; Envoi en cours…';
+
+  try {
+    const r = await callScript('send_code_consultation', {
+      email: gEmail,
+      nom:   gNom,
+      classe: gClasse
+    });
+
+    if (r.error) {
+      let msg = 'Erreur inattendue. Contactez votre formateur.';
+      if (r.error === 'etudiant_non_trouve')
+        msg = 'Identité non reconnue dans le système. Vérifiez votre classe et votre nom.';
+      if (r.error === 'email_non_autorise')
+        msg = '🔒 Cette identité est déjà liée à une autre adresse email. Utilisez l\'adresse avec laquelle vous avez consulté la première fois.';
+      showMsg('err1', msg);
+      btn.disabled = false;
+      btn.innerHTML = '📨&nbsp; Recevoir le code de vérification';
+      return;
+    }
+
+    // ✅ Code envoyé → passer à l'écran 2
+    document.getElementById('id-nom').textContent  = gNom;
+    document.getElementById('id-meta').textContent = 'Classe ' + gClasse + ' · ' + gEmail;
+    document.getElementById('code-hint').innerHTML =
+      'Code envoyé à <strong>' + gEmail + '</strong> — valable 5 minutes';
+    resetCodeInputs();
+    updDots();
+    gExp = Date.now() + EXP_SEC * 1000;
+    startTimer();
+    setProg(2);
+    showScreen('sc-2');
+    setTimeout(() => document.getElementById('c0').focus(), 100);
+
+  } catch(e) {
+    showMsg('err1', 'Erreur réseau. Vérifiez votre connexion et réessayez.');
+  }
+
+  btn.disabled = false;
+  btn.innerHTML = '📨&nbsp; Recevoir le code de vérification';
+}
+
+// ════════════════════════════════════════════════════════════
+// GESTION CODE OTP
+// ════════════════════════════════════════════════════════════
+function onCode(i) {
+  const inp = document.getElementById('c'+i);
+  inp.value = inp.value.replace(/\D/g, '');
+  if (inp.value) { inp.className = 'filled'; if (i < 5) document.getElementById('c'+(i+1)).focus(); }
+  else inp.className = '';
+}
+
+function onKey(i, e) {
+  if (e.key === 'Backspace') {
+    const inp = document.getElementById('c'+i);
+    if (!inp.value && i > 0) document.getElementById('c'+(i-1)).focus();
+    inp.className = '';
+  }
+  if (e.key === 'Enter') doVerify();
+}
+
+function getCode() {
+  let c = '';
+  for (let i = 0; i < 6; i++) c += document.getElementById('c'+i).value;
+  return c;
+}
+
+function resetCodeInputs() {
+  for (let i = 0; i < 6; i++) {
+    document.getElementById('c'+i).value = '';
+    document.getElementById('c'+i).className = '';
+  }
+}
+
+function flashWrong() {
+  for (let i = 0; i < 6; i++) document.getElementById('c'+i).className = 'wrong';
+  setTimeout(resetCodeInputs, 600);
+}
+
+function updDots() {
+  for (let i = 0; i < 3; i++)
+    document.getElementById('at'+i).className = 'at-dot' + (i < gAt ? ' used' : '');
+}
+
+// ════════════════════════════════════════════════════════════
+// TIMER
+// ════════════════════════════════════════════════════════════
+function startTimer() {
+  clearInterval(timerInt);
+  const rb = document.getElementById('resend-btn');
+  rb.disabled = true;
+  let resendWait = 60;
+  timerInt = setInterval(() => {
+    const rem = Math.max(0, Math.round((gExp - Date.now()) / 1000));
+    const m = Math.floor(rem / 60), s = rem % 60;
+    document.getElementById('timer-txt').textContent =
+      String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+    document.getElementById('timer-box').className = 'timer' + (rem < 60 ? ' urgent' : '');
+    resendWait--;
+    if (resendWait <= 0) rb.disabled = false;
+    if (rem === 0) {
+      clearInterval(timerInt);
+      showMsg('err2', 'Code expiré. Cliquez sur « Renvoyer le code ».');
+    }
+  }, 1000);
+}
+
+async function doResend() {
+  const rb = document.getElementById('resend-btn');
+  rb.disabled = true;
+  showMsg('err2', null); showMsg('warn2', null);
+  resetCodeInputs();
+  document.getElementById('code-hint').innerHTML = 'Renvoi en cours…';
+  try {
+    const r = await callScript('send_code_consultation', {
+      email: gEmail, nom: gNom, classe: gClasse
+    });
+    if (r.error) { showMsg('err2', 'Erreur lors du renvoi. Réessayez.'); rb.disabled = false; return; }
+    gExp = Date.now() + EXP_SEC * 1000;
+    document.getElementById('code-hint').innerHTML =
+      'Code renvoyé à <strong>' + gEmail + '</strong> — valable 5 min';
+    startTimer();
+    setTimeout(() => document.getElementById('c0').focus(), 50);
+  } catch(e) {
+    showMsg('err2', 'Erreur réseau. Réessayez.');
+    rb.disabled = false;
+  }
+}
+
+// ════════════════════════════════════════════════════════════
+// ÉTAPE 2 — VÉRIFICATION DU CODE
+// ════════════════════════════════════════════════════════════
+async function doVerify() {
+  const code = getCode();
+  if (code.length < 6) { showMsg('err2', 'Saisissez les 6 chiffres du code reçu.'); return; }
+
+  const btn = document.getElementById('btn-verify');
+  btn.disabled = true;
+  btn.innerHTML = '⏳&nbsp; Vérification…';
+  showMsg('err2', null); showMsg('warn2', null);
+
+  try {
+    const data = await callScript('get_note', {
+      email: gEmail, nom: gNom, classe: gClasse, code
+    });
+
+    if (data.error) {
+      btn.disabled = false;
+      btn.innerHTML = '🔍&nbsp; Voir ma note';
+      if (data.error === 'code_expire') {
+        showMsg('err2', 'Code expiré. Cliquez sur « Renvoyer le code ».');
+        return;
+      }
+      if (data.error === 'trop_tentatives') {
+        clearInterval(timerInt);
+        startLockdown();
+        return;
+      }
+      if (data.error === 'code_incorrect') {
+        gAt++;
+        updDots();
+        flashWrong();
+        const left = data.tentatives_restantes || (MAX_AT - gAt);
+        if (left === 1) showMsg('warn2', '⚠️ Dernière tentative ! L\'accès sera bloqué 10 min après.');
+        showMsg('err2', 'Code incorrect — ' + left + ' tentative(s) restante(s).');
+        return;
+      }
+      showMsg('err2', 'Erreur : ' + data.error + '. Contactez votre formateur.');
+      return;
+    }
+
+    // ✅ Code correct
+    clearInterval(timerInt);
+    afficherNote(data);
+
+  } catch(e) {
+    btn.disabled = false;
+    btn.innerHTML = '🔍&nbsp; Voir ma note';
+    showMsg('err2', 'Erreur réseau. Vérifiez votre connexion et réessayez.');
+  }
+}
+
+// ════════════════════════════════════════════════════════════
+// AFFICHAGE RÉSULTAT
+// ════════════════════════════════════════════════════════════
+function afficherNote(data) {
+  const note = parseFloat(data.note);
+  const m    = getMention(note);
+
+  // 🔒 Mettre à jour la liste locale depuis le serveur (déjà mis à jour par getNote)
+  if (gClasse && gNom) {
+    if (!consultes[gClasse]) consultes[gClasse] = [];
+    if (!consultes[gClasse].includes(gNom)) consultes[gClasse].push(gNom);
+  }
+
+  document.getElementById('res-who').textContent  = data.nom + ' — Classe ' + data.classe;
+  document.getElementById('res-note').textContent = isNaN(note) ? '—' : note.toFixed(2);
+
+  const pill = document.getElementById('res-mention');
+  pill.textContent = m.label;
+
+  document.getElementById('res-details').innerHTML =
+    dRow('Nom complet', data.nom) +
+    dRow('Classe',      data.classe) +
+    dRow('CNE',         data.cne || '—') +
+    dRow('Note finale', isNaN(note) ? '—' :
+      '<span style="color:var(--blue);font-size:15px;font-weight:800">' + note.toFixed(2) + ' / 20</span>') +
+    dRow('Mention',     '<span style="font-weight:700">' + m.label + '</span>');
+
+  if (!isNaN(note)) {
+    document.getElementById('res-email-addr').textContent = gEmail;
+    document.getElementById('res-email-sent').style.display = 'flex';
+  }
+
+  setProg(3);
+  showScreen('sc-3');
+}
+
+function dRow(l, v) {
+  return '<div class="d-row"><span class="dl">'+l+'</span><span class="dv">'+v+'</span></div>';
+}
+
+function getMention(n) {
+  if (n >= 16) return { label: '🏆 Très Bien' };
+  if (n >= 14) return { label: '⭐ Bien' };
+  if (n >= 12) return { label: '👍 Assez Bien' };
+  if (n >= 10) return { label: '✔️ Passable' };
+  return             { label: '📋 Insuffisant' };
+}
+
+// ════════════════════════════════════════════════════════════
+// LOCKDOWN 10 MIN
+// ════════════════════════════════════════════════════════════
+function startLockdown() {
+  showScreen('sc-locked');
+  let rem = LOCK_SEC;
+  lockedInt = setInterval(() => {
+    rem--;
+    document.getElementById('locked-cd').textContent =
+      String(Math.floor(rem/60)).padStart(2,'0') + ':' + String(rem%60).padStart(2,'0');
+    if (rem <= 0) { clearInterval(lockedInt); doRestart(); }
+  }, 1000);
+}
+
+// ════════════════════════════════════════════════════════════
+// RETOUR / RESTART
+// ════════════════════════════════════════════════════════════
+function goBack() {
+  clearInterval(timerInt);
+  resetCodeInputs();
+  showMsg('err2', null); showMsg('warn2', null);
+  gAt = 0; updDots();
+  setProg(1);
+  showScreen('sc-1');
+}
+
+function doRestart() {
+  clearInterval(timerInt); clearInterval(lockedInt);
+  gClasse = ''; gNom = ''; gEmail = ''; gAt = 0;
+  document.getElementById('sel-classe').value = '';
+  document.getElementById('sel-nom').innerHTML = '<option value="">— Choisissez d\'abord votre classe —</option>';
+  document.getElementById('sel-nom').disabled = true;
+  document.getElementById('inp-email').value = '';
+  resetCodeInputs();
+  showMsg('err1', null); showMsg('err2', null); showMsg('warn2', null);
+  document.getElementById('res-email-sent').style.display = 'none';
+  updDots();
+  setProg(1);
+  showScreen('sc-1');
+}
+
+// ════════════════════════════════════════════════════════════
+// APPEL APPS SCRIPT
+// ════════════════════════════════════════════════════════════
+async function callScript(action, params) {
+  const res = await fetch(APPS_URL, {
+    method:  'POST',
+    headers: { 'Content-Type': 'text/plain' },
+    body:    JSON.stringify({ action, _token: SECRET_TOKEN, ...params })
+  });
+  return res.json();
+}
+</script>
+</body>
+</html>
